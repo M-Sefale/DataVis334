@@ -12,7 +12,7 @@
 <generator>quarto-1.8.25</generator>
 <lastBuildDate>Wed, 28 Jan 2026 05:00:00 GMT</lastBuildDate>
 <item>
-  <title>Post With Code</title>
+  <title>Blog 1</title>
   <dc:creator>Lala Sefale</dc:creator>
   <link>https://your-website-url.example.com/posts/post-with-code/</link>
   <description><![CDATA[ 
@@ -21,24 +21,69 @@
 
 
 
-<p>This is a post with executable code.</p>
+<section id="the-languages-of-africa" class="level1">
+<h1>The Languages of Africa</h1>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>This blog post explores the distribution of various languages spoken across the continent of Africa. The data was sourced from the tidytuesday Github repository, curated by Muwanga Robert: https://github.com/rfordatascience/tidytuesday/blob/main/data/2026/2026-01-13/readme.md.</p>
+<p>The data set consists of a variable for language which contains the name of an African language, a variable for family which contains a classification of that language according to ancestry, phonetics and grammar, a variable for native speakers which contains the total number of known native speakers of that language across the continent, and finally a variable for country which contains the name of the country where the language is spoken.</p>
+<p>The question of interest for this exploration is: what is the language that has the most native speakers in Africa, and which region of Africa is it most spoken in?</p>
+<p>To answer this question, a lollipop plot will be made to visualize the top 10 languages with the most native speakers, and the distribution of the one with the highest number of native speakers will be visualized on a map.</p>
+</section>
+<section id="primary-visualizations" class="level2">
+<h2 class="anchored" data-anchor-id="primary-visualizations">Primary Visualizations</h2>
+</section>
+<section id="bar-plot-to-visualize-the-top-10-languages-with-the-most-native-speakers" class="level2">
+<h2 class="anchored" data-anchor-id="bar-plot-to-visualize-the-top-10-languages-with-the-most-native-speakers">Bar plot to visualize the top 10 languages with the most native speakers</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span> <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span> </span></code></pre></div></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/post-with-code/index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This bar plot shows Arabic to be the language with the most native speakers on the African continent by almost 3 times the number of native speakers of Hausa, which is the language that follows it in ranking by native speakers.</p>
+<p>This is a surprising finding for me because I had expected Swahili to be one of the top 2 African languages with most native speakers. It is not so because although it is very widely spoken, a lot of its speakers speak it as a second or third language; they are not native speakers.</p>
+<p>Here is a map to visualize the distribution of Arabic across the African continent.</p>
+</section>
+<section id="map-showing-the-distribution-of-arabic-speaking-countries-across-the-african-continent" class="level2">
+<h2 class="anchored" data-anchor-id="map-showing-the-distribution-of-arabic-speaking-countries-across-the-african-continent">Map showing the distribution of Arabic-speaking countries across the African continent</h2>
+<div class="cell">
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
+<pre><code>Reading layer `ne_10m_admin_0_countries' from data source 
+  `C:\Users\sefal\OneDrive - St. Lawrence University\SPRING 2026\DATA334\DataVis334\countries\ne_10m_admin_0_countries.shp' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 258 features and 168 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: -180 ymin: -90 xmax: 180 ymax: 83.6341
+Geodetic CRS:  WGS 84</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">#nisdfnbfjb</span></span></code></pre></div></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/post-with-code/index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
+</div>
+</div>
+<p>From the map, it can be seen that countries that have native Arabic speakers are mostly in Northern Africa, except for Tanzania, Somalia and Djibouti which are in East Africa. This is likely the result of the 7th-8th century Arab-Islamic Expansion where Arab Muslim armies expanded out of the Arabian Peninsula into mostly Northern Africa and parts of East Africa.</p>
+</section>
+<section id="conclusion-and-wrap-up" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion-and-wrap-up">Conclusion and Wrap-Up</h2>
+<p>The flaw in my approach to visualizing the distribution of countries that have native speakers of Arabic is that from first glance, and without prior understanding of the context of the visualization, a viewer might perceive the map as though it means the countries colored purple have Arabic as the only spoken language, whereas it is just one of the languages spoken in those countries. What this visualization was meant to do is to show which countries have native Arabic speakers.</p>
+<p>If I had additional data on the number of native speakers for each language in every country it is spoken in, I would change the map to have a sequential color scheme to visualize the distribution of Arabic speakers across the continent according to their numbers.</p>
+</section>
+</section>
+<section id="connection-to-class-ideas" class="level1">
+<h1>Connection to Class Ideas</h1>
+<p>A bar plot is an effective visualization for the top 10 languages with the most native speakers because it allows the reader to compare the number of native speakers that each of the 10 languages has. It is particularly effective because the scale of native speakers starts at 0 as we discussed in class that scales for bar plots and lollipop plots must start at zero to make differences more easily comparable.</p>
+<p>A map is also an effective visualization for the second part of the question of interest because I was interested in seeing the geographic distribution of countries with native Arabic speakers across the continent, and the map provided that clearly.</p>
 
 
+</section>
 
  ]]></description>
   <category>news</category>
