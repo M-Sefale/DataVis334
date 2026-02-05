@@ -6,11 +6,192 @@ categories: [news, code, analysis]
 image: "image.jpg"
 ---
 
-This is a post with executable code.
+## The Languages of Africa
+
+# Introduction
+
+This blog post explores the distribution of various languages spoken across the continent of Africa. The data was sources from the tidytuesday Github repository, curated by Muwanga Robert: https://github.com/rfordatascience/tidytuesday/blob/main/data/2026/2026-01-13/readme.md.
+
+The dataset consists of a variable for language which contains the name of an African language, a variable for family which contains a classification of that language according to ancestry, phonetics and grammar, a variable for native speakers which contains the total number of known speakers of that language across the continent, and finally a variable for country which contains the country where the specific language is spoken.
+
+The question of interest for this exploration is: what is the language that has the most native speakers in Africa, and which region of Africa is it most spoken in?
+
+To answer this question, a lollipop plot will be made to visualize the top 10 languages spoken by the most native speakers, and the distribution of the one with the highest number of speakers will be visualized on a map.
+
+# Primary Visualizations
 
 ```{r}
-1 + 1 
+#| echo: FALSE
+# Using R
+# Option 1: tidytuesdayR R package 
+## install.packages("tidytuesdayR")
 
+# Reading data directly from GitHub
 
-#nisdfnbfjb
+africa <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2026/2026-01-13/africa.csv')
+
+africa
+
 ```
+
+# lollipop plot of top 10most spoken languages (spoken )
+```{r}
+# top 10 languages spoken in the most number of countries
+most_spoken10 <- africa |> group_by(language) |>
+  slice(1) |> #because even though a language may appear many times, it appears with the same number of speakers because that is the total across the continent
+  ungroup() |>
+  arrange(desc(native_speakers)) |>
+  slice(1:10) |>
+  mutate(language = fct_reorder(language, native_speakers))
+
+# lollipop plot to visualize the top 10 languages spoken in most countries in Africa
+
+ggplot(data = most_spoken10, aes(x = language, y = native_speakers)) +
+  geom_point(colour = "darkgreen") +
+  geom_segment(aes(xend = language, y = 0, yend = native_speakers), colour = "darkgreen") +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Top 10 languages with the most native speakers in Africa",
+       x = "Language",
+       y = "Number of native speakers")
+
+# Bar plot to visualize the top 10 languages with the most native speakers 
+
+ggplot(data = most_spoken10, aes(x = language, y = native_speakers)) +
+  geom_col(fill = "darkgreen") +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Top 10 languages with the most native speakers in Africa",
+       x = "Language",
+       y = "Number of native speakers")
+
+```
+
+
+The bar plot above shows Arabic to be the language with the most native speakers on the African continent by almost 3 times the number of native speakers of Hausa, which is the language that follows it in ranking by native speakers.
+
+-- surprising finding -- expected Swahili to be one of the top 2 with most native speakers -- not so because although it is very widely spoken, a lot of its speakers speak it as a second or third language, not native speakers
+
+```{r}
+
+
+```
+
+
+```{r}
+# map to show the distribution of Arabic-speaking countries across the African continent
+
+## install.packages("sf")
+library(sf)
+library(here)
+library(tidyverse)
+
+# Read shapefile
+world <- st_read(here("countries", "ne_10m_admin_0_countries.shp"))
+
+# Filter for Africa
+africa_mapfile <- world |> filter(CONTINENT == "Africa")
+
+glimpse(africa)
+
+
+#joining the 2 data sets
+
+# name of country == NAME_EN in africa_mapfile
+# country in africa data frame
+# making them the same column for easy joining
+africa_mapfile <- africa_mapfile |> rename(country = NAME_EN)
+
+glimpse(africa_mapfile)
+
+
+
+# filter countries with arabic as language, store in data frame,mutate variable for spoken language arabic, join that data frame to the main one by country -- use data set main with no language -- countries with no arabic should contain NA - then mutate the languages with NA to be "other" while the arabic ones are arabic
+
+arabic <- africa |> filter(language == "Arabic") |>
+  mutate(spoken_language = language)
+
+joined <- left_join(africa_mapfile, africa, by = "country")
+
+joined_arabic <- left_join(joined, arabic, by = "country") |>
+  mutate(spoken_language = case_when(spoken_language == "Arabic" ~ "Arabic",
+                                     is.na(spoken_language) ~ "Other")) 
+
+
+ggplot(data = joined_arabic) +
+  geom_sf(aes(fill = spoken_language)) +
+  theme_void() +
+  scale_fill_viridis_d()
+
+```
+
+From the map above, it can be seen that countries that have Arabic as one of their spoken languages are mostly in Northern Africa, except for Tanzania, Somalia and Djibouti which are all in East Africa. 
+
+# Conclusion and Wrap-Up
+
+flaws:
+- There is a flaw in my approach to visualizing the distribution of countries that have native speakers of Arabic. From first glance, and without prior understanding of the context of the visualization, a viewer might perceive the map as though it means the countries coloured purple only have Arabic as the spoken language, whereas it is just one of the languages spoken in those countries. What this visualization was meant to do is to show which countries have Arabic as a spoken language
+
+If I had additional data on the number of native speakers for each language in every country it is spoken in, I would change the map to have a sequential color scheme to visualize the distribution of Arabic speakers across the continent according to their numbers.
+
+
+# Connection to Class Ideas
+
+
+?????
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+
+
+# seeing that Tsonga is among th etop 10 by country, I am curious which other countries speak it because i only know of it being spoken in South Africa, and by not a very huge population there:
+
+#map showing countries that speak Xitsonga/Tsonga
+
+
+
+# PROBLEM HERE: NATIVE_SPEAKERS IS THE TOTAL NUMBER OF KNOWN NATIVE SPEAKERS, EACH LANGUAGE HAS THE SAME ONE NUMBER IN THIS COLUMN EVERYTIME IT APPEARS
+# FIXXXXX
+
+#top 10 languages spoken by the highest number of native speakers
+most_speakers <- africa |> group_by(language) |>
+  summarise(sum_speakers = sum(native_speakers)) |>
+  arrange(desc(sum_speakers)) |>
+  slice(1:10) |>
+  
+
+# a map to visualize the geographic location of the countries where Soninke is spoken to see its distribution across the continent
+
+
+# a map to visualize the geographic location of the countries where Arabic is spoken to see if there is a trend
+
+
+africa |> filter(language == "Sesotho")
+
+
+# map showing the distribution of family of languages -- analysis includes why afroasiatic is on the east side...
+```
+
+
+
+
+
+
+ideas:
+- find the most spoken language - then visualize to see which countries speak it
+
+- visualization for which countries speak swahili
+
+- seeing which countries speak sesotho...
+
+- some visualization to see language distributions by SUBREGION
