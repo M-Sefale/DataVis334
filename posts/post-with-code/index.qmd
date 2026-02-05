@@ -37,7 +37,9 @@ library(tidyverse)
 africa <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2026/2026-01-13/africa.csv')
 ```
 
-## Bar plot to visualize the top 10 languages with the most native speakers 
+__Bar plot to visualize the top 10 languages with the most native speakers__
+
+
 
 ```{r}
 #| echo: FALSE
@@ -68,7 +70,9 @@ This is a surprising finding for me because I had expected Swahili to be one of 
 
 Here is a map to visualize the distribution of Arabic across the African continent.
 
-## Map showing the distribution of Arabic-speaking countries across the African continent
+__Map showing the distribution of Arabic-speaking countries across the African continent__
+
+
 
 ```{r}
 #| echo: FALSE

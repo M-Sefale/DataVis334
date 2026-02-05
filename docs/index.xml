@@ -32,9 +32,7 @@
 </section>
 <section id="primary-visualizations" class="level2">
 <h2 class="anchored" data-anchor-id="primary-visualizations">Primary Visualizations</h2>
-</section>
-<section id="bar-plot-to-visualize-the-top-10-languages-with-the-most-native-speakers" class="level2">
-<h2 class="anchored" data-anchor-id="bar-plot-to-visualize-the-top-10-languages-with-the-most-native-speakers">Bar plot to visualize the top 10 languages with the most native speakers</h2>
+<p><strong>Bar plot to visualize the top 10 languages with the most native speakers</strong></p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
@@ -47,9 +45,7 @@
 <p>This bar plot shows Arabic to be the language with the most native speakers on the African continent by almost 3 times the number of native speakers of Hausa, which is the language that follows it in ranking by native speakers.</p>
 <p>This is a surprising finding for me because I had expected Swahili to be one of the top 2 African languages with most native speakers. It is not so because although it is very widely spoken, a lot of its speakers speak it as a second or third language; they are not native speakers.</p>
 <p>Here is a map to visualize the distribution of Arabic across the African continent.</p>
-</section>
-<section id="map-showing-the-distribution-of-arabic-speaking-countries-across-the-african-continent" class="level2">
-<h2 class="anchored" data-anchor-id="map-showing-the-distribution-of-arabic-speaking-countries-across-the-african-continent">Map showing the distribution of Arabic-speaking countries across the African continent</h2>
+<p><strong>Map showing the distribution of Arabic-speaking countries across the African continent</strong></p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `ne_10m_admin_0_countries' from data source 
