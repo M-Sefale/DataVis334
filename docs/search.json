@@ -7,11 +7,18 @@
     "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "DataVis334",
+    "objectID": "posts/Blog2/index.html",
+    "href": "posts/Blog2/index.html",
+    "title": "Blog 2",
     "section": "",
-    "text": "Blog 1\n\n\n\nnews\n\ncode\n\nanalysis\n\n\n\n\n\n\n\n\n\nJan 28, 2026\n\n\nLala Sefale\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\nTristan O’Malley\n\n\n\n\n\nNo matching items"
+    "text": "Introduction\nThis project explores a data set of fuel weekly fuel prices in the U.S. The data comes from the tidytuesday repository and the desciption said it was sourced from the U.S. Energy Information Administration (EIA). Here is the link for the tidytuesday repository from which this data was sourced: https://github.com/rfordatascience/tidytuesday/blob/main/data/2025/2025-07-01/readme.md\nThe data set contains a date variable which shows the day, month and year when the fuel prices were recorded, a fuel variable which is a categorical variable with the values gasoline and diesel, grade variable which is a categorical variable distinguishing the grade of gasoline or diesel, formulation which is a categorical variable describing the fuel’s formulation, and price which is a numerical variable showing the weekly price of fuel. The data set has 22, 360 observations.\nIn this data set, I am mostly interested in the date, fuel, grade and price variables to answer the following questions:\n\nHow have diesel and gasoline prices changed in the U.S. over time?\nHow have the prices of gasoline specifically differed by for different grades?\n\nThe grade variable has values all, regular, midgrade, or premium. All is a generalized representation of all the other grades (with price for such observations being the weighted average for all the other grades). To compare the grades more thoroughly without double counting, I will only visualize observations of grade “all”.\n\nlibrary(tidyverse)\nlibrary(broom)\n\nweekly_gas_prices &lt;- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-07-01/weekly_gas_prices.csv')\n\n\n\nVisualizations\nTo visualize the annual trends in average fuel prices for gasoline and diesel over the years, I filtered the data set to use only observations with grade == “all” because they are already encompassing the other grades.\n\nprices_type &lt;- weekly_gas_prices |&gt; mutate(year = year(date))|&gt;\n  filter(grade == \"all\") |&gt;\n  group_by(year, fuel) |&gt;\n  summarise(avg_price = mean(price)) \n\n`summarise()` has grouped output by 'year'. You can override using the\n`.groups` argument.\n\n## visualization for trends in average fuel prices over the years\n\nggplot(data = prices_type, aes(x = year, y = avg_price)) +\n  geom_line(aes(colour = fuel), linewidth = 1) +\n  theme_minimal() +\n  scale_color_viridis_d() +\n  labs(title = \"Fuel prices over the years\",\n       x = \"Year\",\n       y = \"Average price\")\n\n\n\n\n\n\n\n\nBetween 1994 and 2005, the average price of gasoline was consistently greater than the price of diesel. However, after 2005, the average price of diesel has been greater than the average price of gasoline.\nThere are three major dips in the trends of average prices of both diesel and gasoline around 2008, 2016 and 2020. My hypothesis is that these these align with the 2008 recession and the 2020 Covid pandemic. The dip in 2016 was caused by a surge in oil supply in the U.S. which led to price reductions.\nFrom the line plot, it can be seen that the average prices of both diesel and gasoline have had an overall increase over the years despite the fluctuations.\nTo compare the trends in gasoline price according to grade:\n\ngrade_gas &lt;- weekly_gas_prices |&gt; mutate(year = year(date))|&gt; \n  filter(fuel == \"gasoline\" & grade != \"all\") |&gt;\n  group_by(year, fuel, grade) |&gt;\n  summarise(average_price = mean(price)) \n\n`summarise()` has grouped output by 'year', 'fuel'. You can override using the\n`.groups` argument.\n\nggplot(data = grade_gas, aes(x = year, y = average_price, colour = grade)) +\n  geom_point() +\n  geom_smooth(se = FALSE) +\n  theme_minimal() +\n  scale_color_viridis_d() +\n  labs(title = \"Trends in gasoline prices according to grade\", \n       x = \"Year\", \n       y = \"Average price\")\n\n`geom_smooth()` using method = 'loess' and formula = 'y ~ x'\n\n\n\n\n\n\n\n\n\nFrom the above scatter plot, it can be concluded that the price levels for gasoline differ according to grade over the years. The smoother for the prices of premium grade is the highest overall, followed by the prices for midgrade and lastly regular grade.\n\n\nConclusion:\nObservations for midgrade and premium grade gasoline only start in 1994 whereas those of regular grade gasoline started from 1990. This does not show the full picture of the trends in prices by grade from 1990 to 1993, creating an incomplete analysis.\nIf I had more time, I would explore the trends in diesel prices over the years according to its grades just I did for gasoline.\n\n\nConnection to Class Ideas\nThe visualizations I made use colors that are accessible for individuals with Color Vision Deficiency. I used a line plot to represent trends through time."
+  },
+  {
+    "objectID": "Blog 1.html",
+    "href": "Blog 1.html",
+    "title": "Blog 1",
+    "section": "",
+    "text": "Blog 2\n\n\n\nnews\n\ncode\n\nanalysis\n\n\n\n\n\n\n\n\n\nFeb 17, 2026\n\n\nLala Sefale\n\n\n\n\n\n\n\n\n\n\n\n\nBlog 1\n\n\n\nnews\n\ncode\n\nanalysis\n\n\n\n\n\n\n\n\n\nJan 28, 2026\n\n\nLala Sefale\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\nTristan O’Malley\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -21,11 +28,11 @@
     "text": "About this blog"
   },
   {
-    "objectID": "Blog 1.html",
-    "href": "Blog 1.html",
-    "title": "Blog 1",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "DataVis334",
     "section": "",
-    "text": "Blog 1\n\n\n\nnews\n\ncode\n\nanalysis\n\n\n\n\n\n\n\n\n\nJan 28, 2026\n\n\nLala Sefale\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\nTristan O’Malley\n\n\n\n\n\nNo matching items"
+    "text": "Blog 2\n\n\n\nnews\n\ncode\n\nanalysis\n\n\n\n\n\n\n\n\n\nFeb 17, 2026\n\n\nLala Sefale\n\n\n\n\n\n\n\n\n\n\n\n\nBlog 1\n\n\n\nnews\n\ncode\n\nanalysis\n\n\n\n\n\n\n\n\n\nJan 28, 2026\n\n\nLala Sefale\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJan 25, 2026\n\n\nTristan O’Malley\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/post-with-code/index.html",

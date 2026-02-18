@@ -1,0 +1,90 @@
+---
+title: "Blog 2"
+author: "Lala Sefale"
+date: "2026-02-17"
+categories: [news, code, analysis]
+image: "image.jpg"
+---
+
+# Introduction
+
+This project explores a data set of fuel weekly fuel prices in the U.S. The data comes from the tidytuesday repository and the desciption said it was sourced from the U.S. Energy Information Administration (EIA). Here is the link for the tidytuesday repository from which this data was sourced: https://github.com/rfordatascience/tidytuesday/blob/main/data/2025/2025-07-01/readme.md
+
+The data set contains a date variable which shows the day, month and year when the fuel prices were recorded, a fuel variable which is a categorical variable with the values gasoline and diesel, grade variable which is a categorical variable distinguishing the grade of gasoline or diesel, formulation which is a categorical variable describing the fuel's formulation, and price which is a numerical variable showing the weekly price of fuel. The data set has 22, 360 observations.
+
+In this data set, I am mostly interested in the date, fuel, grade and price variables to answer the following questions:
+
+-   How have diesel and gasoline prices changed in the U.S. over time?
+
+-   How have the prices of gasoline specifically differed by for different grades?
+
+The grade variable has values all, regular, midgrade, or premium. All is a generalized representation of all the other grades (with price for such observations being the weighted average for all the other grades). To compare the grades more thoroughly without double counting, I will only visualize observations of grade "all".
+
+```{r}
+#| warning: false
+library(tidyverse)
+library(broom)
+
+weekly_gas_prices <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-07-01/weekly_gas_prices.csv')
+
+```
+
+# Visualizations
+
+To visualize the annual trends in average fuel prices for gasoline and diesel over the years, I filtered the data set to use only observations with grade == "all" because they are already encompassing the other grades.
+
+```{r}
+prices_type <- weekly_gas_prices |> mutate(year = year(date))|>
+  filter(grade == "all") |>
+  group_by(year, fuel) |>
+  summarise(avg_price = mean(price)) 
+  
+
+## visualization for trends in average fuel prices over the years
+
+ggplot(data = prices_type, aes(x = year, y = avg_price)) +
+  geom_line(aes(colour = fuel), linewidth = 1) +
+  theme_minimal() +
+  scale_color_viridis_d() +
+  labs(title = "Fuel prices over the years",
+       x = "Year",
+       y = "Average price")
+```
+
+Between 1994 and 2005, the average price of gasoline was consistently greater than the price of diesel. However, after 2005, the average price of diesel has been greater than the average price of gasoline.
+
+There are three major dips in the trends of average prices of both diesel and gasoline around 2008, 2016 and 2020. My hypothesis is that these these align with the 2008 recession and the 2020 Covid pandemic. The dip in 2016 was caused by a surge in oil supply in the U.S. which led to price reductions.
+
+From the line plot, it can be seen that the average prices of both diesel and gasoline have had an overall increase over the years despite the fluctuations.
+
+To compare the trends in gasoline price according to grade:
+
+```{r}
+grade_gas <- weekly_gas_prices |> mutate(year = year(date))|> 
+  filter(fuel == "gasoline" & grade != "all") |>
+  group_by(year, fuel, grade) |>
+  summarise(average_price = mean(price)) 
+
+
+ggplot(data = grade_gas, aes(x = year, y = average_price, colour = grade)) +
+  geom_point() +
+  geom_smooth(se = FALSE) +
+  theme_minimal() +
+  scale_color_viridis_d() +
+  labs(title = "Trends in gasoline prices according to grade", 
+       x = "Year", 
+       y = "Average price")
+
+```
+
+From the above scatter plot, it can be concluded that the price levels for gasoline differ according to grade over the years. The smoother for the prices of premium grade is the highest overall, followed by the prices for midgrade and lastly regular grade.
+
+# Conclusion:
+
+Observations for midgrade and premium grade gasoline only start in 1994 whereas those of regular grade gasoline started from 1990. This does not show the full picture of the trends in prices by grade from 1990 to 1993, creating an incomplete analysis.
+
+If I had more time, I would explore the trends in diesel prices over the years according to its grades just I did for gasoline.
+
+# Connection to Class Ideas
+
+The visualizations I made use colors that are accessible for individuals with Color Vision Deficiency. I used a line plot to represent trends through time.
