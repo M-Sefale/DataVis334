@@ -2,7 +2,7 @@
 
 # freeze computational output
 # (see https://quarto.org/docs/projects/code-execution.html#freeze)
-freeze: true  #is the deafualt, you have to render twice to change output
+freeze: false  #is the deafualt, you have to render twice to change output
 
 # Enable banner style title blocks
 title-block-banner: true
