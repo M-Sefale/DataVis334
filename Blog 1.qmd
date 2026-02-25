@@ -1,5 +1,5 @@
 ---
-title: "Blog 1"
+title: "The Languages of Africa"
 listing:
   contents: posts
   feed: true

@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Data Visualization Blg Posts</title>
+<link>https://your-website-url.example.com/Blog 1.html</link>
+<atom:link href="https://your-website-url.example.com/Blog 1.xml" rel="self" type="application/rss+xml"/>
+<description>A blog built with Quarto</description>
+<generator>quarto-1.8.25</generator>
+<lastBuildDate>Tue, 17 Feb 2026 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>Blog 2</title>
+  <dc:creator>Lala Sefale</dc:creator>
+  <link>https://your-website-url.example.com/posts/Blog2/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>This project explores a data set of fuel weekly fuel prices in the U.S. The data comes from the tidytuesday repository and the desciption said it was sourced from the U.S. Energy Information Administration (EIA). Here is the link for the tidytuesday repository from which this data was sourced: https://github.com/rfordatascience/tidytuesday/blob/main/data/2025/2025-07-01/readme.md</p>
+<p>The data set contains a date variable which shows the day, month and year when the fuel prices were recorded, a fuel variable which is a categorical variable with the values gasoline and diesel, grade variable which is a categorical variable distinguishing the grade of gasoline or diesel, formulation which is a categorical variable describing the fuel’s formulation, and price which is a numerical variable showing the weekly price of fuel. The data set has 22, 360 observations.</p>
+<p>In this data set, I am mostly interested in the date, fuel, grade and price variables to answer the following questions:</p>
+<ul>
+<li><p>How have diesel and gasoline prices changed in the U.S. over time?</p></li>
+<li><p>How have the prices of gasoline specifically differed by for different grades?</p></li>
+</ul>
+<p>The grade variable has values all, regular, midgrade, or premium. All is a generalized representation of all the other grades (with price for such observations being the weighted average for all the other grades). To compare the grades more thoroughly without double counting, I will only visualize observations of grade “all”.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(broom)</span>
+<span id="cb1-3"></span>
+<span id="cb1-4">weekly_gas_prices <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> readr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-07-01/weekly_gas_prices.csv'</span>)</span></code></pre></div></div>
+</div>
+</section>
+<section id="visualizations" class="level1">
+<h1>Visualizations</h1>
+<p>To visualize the annual trends in average fuel prices for gasoline and diesel over the years, I filtered the data set to use only observations with grade == “all” because they are already encompassing the other grades.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">prices_type <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> weekly_gas_prices <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">year =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">year</span>(date))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(grade <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"all"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span>(year, fuel) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarise</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">avg_price =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(price)) </span></code></pre></div></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'year'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## visualization for trends in average fuel prices over the years</span></span>
+<span id="cb4-2"></span>
+<span id="cb4-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> prices_type, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> year, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> avg_price)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colour =</span> fuel), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">linewidth =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_minimal</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_color_viridis_d</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Fuel prices over the years"</span>,</span>
+<span id="cb4-8">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Year"</span>,</span>
+<span id="cb4-9">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Average price"</span>)</span></code></pre></div></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/Blog2/index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Between 1994 and 2005, the average price of gasoline was consistently greater than the price of diesel. However, after 2005, the average price of diesel has been greater than the average price of gasoline.</p>
+<p>There are three major dips in the trends of average prices of both diesel and gasoline around 2008, 2016 and 2020. My hypothesis is that these these align with the 2008 recession and the 2020 Covid pandemic. The dip in 2016 was caused by a surge in oil supply in the U.S. which led to price reductions.</p>
+<p>From the line plot, it can be seen that the average prices of both diesel and gasoline have had an overall increase over the years despite the fluctuations.</p>
+<p>To compare the trends in gasoline price according to grade:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">grade_gas <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> weekly_gas_prices <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">year =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">year</span>(date))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb5-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(fuel <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"gasoline"</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> grade <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"all"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span>(year, fuel, grade) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarise</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">average_price =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(price)) </span></code></pre></div></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'year', 'fuel'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> grade_gas, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> year, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> average_price, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colour =</span> grade)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb7-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb7-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_smooth</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">se =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb7-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_minimal</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb7-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_color_viridis_d</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb7-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Trends in gasoline prices according to grade"</span>, </span>
+<span id="cb7-7">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Year"</span>, </span>
+<span id="cb7-8">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Average price"</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/Blog2/index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>From the above scatter plot, it can be concluded that the price levels for gasoline differ according to grade over the years. The smoother for the prices of premium grade is the highest overall, followed by the prices for midgrade and lastly regular grade.</p>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion:</h1>
+<p>Observations for midgrade and premium grade gasoline only start in 1994 whereas those of regular grade gasoline started from 1990. This does not show the full picture of the trends in prices by grade from 1990 to 1993, creating an incomplete analysis.</p>
+<p>If I had more time, I would explore the trends in diesel prices over the years according to its grades just I did for gasoline.</p>
+</section>
+<section id="connection-to-class-ideas" class="level1">
+<h1>Connection to Class Ideas</h1>
+<p>The visualizations I made use colors that are accessible for individuals with Color Vision Deficiency. I used a line plot to represent trends through time.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>news</category>
+  <category>code</category>
+  <category>analysis</category>
+  <guid>https://your-website-url.example.com/posts/Blog2/</guid>
+  <pubDate>Tue, 17 Feb 2026 05:00:00 GMT</pubDate>
+  <media:content url="https://your-website-url.example.com/posts/Blog2/image.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>Blog 1</title>
+  <dc:creator>Lala Sefale</dc:creator>
+  <link>https://your-website-url.example.com/posts/post-with-code/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="the-languages-of-africa" class="level1">
+<h1>The Languages of Africa</h1>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>This blog post explores the distribution of various languages spoken across the continent of Africa. The data was sourced from the tidytuesday Github repository, curated by Muwanga Robert: https://github.com/rfordatascience/tidytuesday/blob/main/data/2026/2026-01-13/readme.md.</p>
+<p>The data set consists of a variable for language which contains the name of an African language, a variable for family which contains a classification of that language according to ancestry, phonetics and grammar, a variable for native speakers which contains the total number of known native speakers of that language across the continent, and finally a variable for country which contains the name of the country where the language is spoken.</p>
+<p>The question of interest for this exploration is: what is the language that has the most native speakers in Africa, and which region of Africa is it most spoken in?</p>
+<p>To answer this question, a lollipop plot will be made to visualize the top 10 languages with the most native speakers, and the distribution of the one with the highest number of native speakers will be visualized on a map.</p>
+</section>
+<section id="primary-visualizations" class="level2">
+<h2 class="anchored" data-anchor-id="primary-visualizations">Primary Visualizations</h2>
+<p><strong>Bar plot to visualize the top 10 languages with the most native speakers</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/post-with-code/index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This bar plot shows Arabic to be the language with the most native speakers on the African continent by almost 3 times the number of native speakers of Hausa, which is the language that follows it in ranking by native speakers.</p>
+<p>This is a surprising finding for me because I had expected Swahili to be one of the top 2 African languages with most native speakers. It is not so because although it is very widely spoken, a lot of its speakers speak it as a second or third language; they are not native speakers.</p>
+<p>Here is a map to visualize the distribution of Arabic across the African continent.</p>
+<p><strong>Map showing the distribution of Arabic-speaking countries across the African continent</strong></p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `ne_10m_admin_0_countries' from data source 
+  `C:\Users\sefal\OneDrive - St. Lawrence University\SPRING 2026\DATA334\DataVis334\countries\ne_10m_admin_0_countries.shp' 
+  using driver `ESRI Shapefile'
+Simple feature collection with 258 features and 168 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: -180 ymin: -90 xmax: 180 ymax: 83.6341
+Geodetic CRS:  WGS 84</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/post-with-code/index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>From the map, it can be seen that countries that have native Arabic speakers are mostly in Northern Africa, except for Tanzania, Somalia and Djibouti which are in East Africa. This is likely the result of the 7th-8th century Arab-Islamic Expansion where Arab Muslim armies expanded out of the Arabian Peninsula into mostly Northern Africa and parts of East Africa.</p>
+</section>
+<section id="conclusion-and-wrap-up" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion-and-wrap-up">Conclusion and Wrap-Up</h2>
+<p>The flaw in my approach to visualizing the distribution of countries that have native speakers of Arabic is that from first glance, and without prior understanding of the context of the visualization, a viewer might perceive the map as though it means the countries colored purple have Arabic as the only spoken language, whereas it is just one of the languages spoken in those countries. What this visualization was meant to do is to show which countries have native Arabic speakers.</p>
+<p>If I had additional data on the number of native speakers for each language in every country it is spoken in, I would change the map to have a sequential color scheme to visualize the distribution of Arabic speakers across the continent according to their numbers.</p>
+</section>
+</section>
+<section id="connection-to-class-ideas" class="level1">
+<h1>Connection to Class Ideas</h1>
+<p>A bar plot is an effective visualization for the top 10 languages with the most native speakers because it allows the reader to compare the number of native speakers that each of the 10 languages has. It is particularly effective because the scale of native speakers starts at 0 as we discussed in class that scales for bar plots and lollipop plots must start at zero to make differences more easily comparable.</p>
+<p>A map is also an effective visualization for the second part of the question of interest because I was interested in seeing the geographic distribution of countries with native Arabic speakers across the continent, and the map provided that clearly.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>news</category>
+  <category>code</category>
+  <category>analysis</category>
+  <guid>https://your-website-url.example.com/posts/post-with-code/</guid>
+  <pubDate>Wed, 28 Jan 2026 05:00:00 GMT</pubDate>
+  <media:content url="https://your-website-url.example.com/posts/post-with-code/image.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>Welcome To My Blog</title>
+  <dc:creator>Tristan O&#39;Malley</dc:creator>
+  <link>https://your-website-url.example.com/posts/welcome/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>This is the first post in a Quarto blog. Welcome!</p>
+<p><img src="https://your-website-url.example.com/posts/welcome/thumbnail.jpg" class="img-fluid"></p>
+<p>Since this post doesn’t specify an explicit <code>image</code>, the first image in the post will be used in the listing page of posts.</p>
+
+
+
+ ]]></description>
+  <category>news</category>
+  <guid>https://your-website-url.example.com/posts/welcome/</guid>
+  <pubDate>Sun, 25 Jan 2026 05:00:00 GMT</pubDate>
+</item>
+</channel>
+</rss>
