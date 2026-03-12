@@ -6,11 +6,10 @@ about:
   links:
     - icon: linkedin
       text: LinkedIn
-      href: https://linkedin.com
+      href: https://www.linkedin.com/in/matlala-lala-sefale-91435035a
     - icon: github
       text: Github
       href: https://github.com/M-Sefale/M-Sefale/blob/main/README.md
 ---
 
-This blog contains Data Visualization projects for the DATA 334 course. 
-
+This blog contains Data Visualization projects for the DATA 334 course.

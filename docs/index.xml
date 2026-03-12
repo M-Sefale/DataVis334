@@ -8,11 +8,645 @@
 <title>DATA 334 Blog Posts</title>
 <link>https://your-website-url.example.com/</link>
 <atom:link href="https://your-website-url.example.com/index.xml" rel="self" type="application/rss+xml"/>
-<description>A blog built with Quarto</description>
+<description>Data Visualization Blog projects</description>
 <generator>quarto-1.8.25</generator>
-<lastBuildDate>Tue, 17 Feb 2026 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Tue, 10 Mar 2026 04:00:00 GMT</lastBuildDate>
 <item>
-  <title>Blog 2</title>
+  <title>How Childcare Costs Vary Across the U.S.</title>
+  <dc:creator>Lala Sefale</dc:creator>
+  <link>https://your-website-url.example.com/posts/Blog 3/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>This is an exploration of a data set of childcare prices across the U.S. from 2008 to 2018. The data comes from the tidytuesday repository and the description said it was sourced from the National Database of Childcare Prices (NDCP). Here is the link for the tidytuesday repository from which this data was sourced: https://github.com/rfordatascience/tidytuesday/blob/main/data/2023/2023-05-09/readme.md</p>
+<p>The main data set consists of 34, 567 observations and 61 variables of childcare price data by childcare provider type, age of children, and county characteristics in the U.S. from 2008 to 2018. For the purpose of this exploration, this data set will be merged with a data set of U.S. counties and states according to their FIPS codes (unique numeric identifier for counties).</p>
+<p>The data features two types of childcare providers: Center-based Care and Family Childcare. According to the Center for American Progress, Center-based Care is care offered in a nonresidential facilities like daycare centers where children are usually grouped into classrooms and supervised by multiple staff members, while Family Childcare is care provided in a private homes, often run by an individual provider.</p>
+<p>In this data set, I am mostly interested in the study_year, county_name, state_name, and the variables for aggregated full-time median prices charged for Center-based Care and Family Childcare to study trends in childcare prices over time and across states, age groups and systems based on the following questions:</p>
+<ul>
+<li><p>What is the spatial distribution of average childcare prices across U.S states?</p></li>
+<li><p>What was the trend in prices of childcare between 2008 and 2018 in the state with the highest price levels?</p></li>
+<li><p>How do childcare prices differ across age groups and childcare type?</p></li>
+</ul>
+<p>It is worth noting that the prices provided in this data set are median weekly prices of childcare per county.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">childcare <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> readr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2023/2023-05-09/childcare_costs.csv'</span>)</span>
+<span id="cb1-4"></span>
+<span id="cb1-5">USA <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> readr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2023/2023-05-09/counties.csv'</span>)</span>
+<span id="cb1-6"></span>
+<span id="cb1-7">cost_df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">left_join</span>(childcare, USA, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">join_by</span>(county_fips_code))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rename</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mc_school_age =</span> mcsa,</span>
+<span id="cb1-9">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mfcc_school_age =</span> mfccsa)</span>
+<span id="cb1-10"></span>
+<span id="cb1-11">cost_long <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> cost_df <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span>  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pivot_longer</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">cols =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(mc_school_age, mc_infant, mc_toddler, mc_preschool,</span>
+<span id="cb1-12">             mfcc_school_age, mfcc_infant, mfcc_toddler, mfcc_preschool),</span>
+<span id="cb1-13">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">names_to =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"care_type"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"age_group"</span>),</span>
+<span id="cb1-14">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">names_pattern =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"(mc|mfcc)_(.*)"</span>,</span>
+<span id="cb1-15">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">values_to =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"price"</span>)</span>
+<span id="cb1-16"></span>
+<span id="cb1-17">cost_long <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> cost_long <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">care_type =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">if_else</span>(care_type <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"mc"</span>, </span>
+<span id="cb1-18">                                      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">true =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"center-based"</span>, </span>
+<span id="cb1-19">                                      <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">false =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"family care"</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-20">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(study_year, state_name, county_name, care_type, age_group, price)</span></code></pre></div></div>
+</div>
+</section>
+<section id="visualizations" class="level1">
+<h1>Visualizations</h1>
+<section id="differences-by-age-group-and-provider-type" class="level2">
+<h2 class="anchored" data-anchor-id="differences-by-age-group-and-provider-type">Differences by Age Group and Provider Type</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#removing NA values for type comparisons</span></span>
+<span id="cb2-2">cost_long1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> cost_long <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(care_type), <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(age_group), <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(price)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb2-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">age_group =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.factor</span>(age_group)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">age_group =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fct_relevel</span>(age_group, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"infant"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"toddler"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"preschool"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"school_age"</span>))</span>
+<span id="cb2-5"></span>
+<span id="cb2-6"></span>
+<span id="cb2-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># comparing age group prices</span></span>
+<span id="cb2-8"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> cost_long1, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> age_group, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> price)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_boxplot</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">width =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colour =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"darkblue"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"skyblue"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-10">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_minimal</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb2-11">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Box Plot of weekly prices of childcare by age-group"</span>,</span>
+<span id="cb2-12">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Age group"</span>,</span>
+<span id="cb2-13">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"weekly price"</span>)</span></code></pre></div></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/Blog 3/index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Infant care tends to have higher median of prices and have outliers that tend to reach higher prices, while preschool and toddler care tend to have lower median prices, with preschool-age care having the least mean price of the four categories. This means that the cost of infant care tends more expensive than preschool and toddler care. Infants are 0 to 1 year olds, toddlers are children aged 1 to 3 years, preschoolers are aged 3 to 5 years, and school-aged children are 6 to 17 year olds. From the side-by-side boxplot above, it can be seen that the mean weekly price of childcare gets lower as the age group increases in years. This could be because the younger children require more intensive care than the older ones.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># comparing care types</span></span>
+<span id="cb3-2"></span>
+<span id="cb3-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> cost_long1, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> care_type, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> price)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_boxplot</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">width =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colour =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"darkblue"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"skyblue"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_minimal</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb3-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Boxplot of weekly prices of childcare by Care Type"</span>,</span>
+<span id="cb3-7">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Care Type"</span>,</span>
+<span id="cb3-8">       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"weekly price"</span>)</span></code></pre></div></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/Blog 3/index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>From the boxplot above, it can be observed that the weekly prices for center-based childcare have a higher median and higher reaching outliers than family-based care. This suggests that center-based care tends to be more expensive than family-based child care. This could be because in center-based care, one provider cares for many children at once, therefore leading to more work which requires higher pay.</p>
+</section>
+<section id="geographic-variation-in-childcare-costs" class="level2">
+<h2 class="anchored" data-anchor-id="geographic-variation-in-childcare-costs">Geographic Variation in Childcare Costs</h2>
+<p>To assess the spatial distribution of median weekly childcare prices across the United States, across age ranges and childcare types, below is a choropleth map.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(maps)</span>
+<span id="cb4-2">state_df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> ggplot2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">map_data</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"state"</span>)</span>
+<span id="cb4-3"></span>
+<span id="cb4-4">cost_st <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> cost_long <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">state_name =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">str_to_lower</span>(state_name)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb4-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span>(state_name) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb4-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarise</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">average_price =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(price, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>))</span>
+<span id="cb4-7"></span>
+<span id="cb4-8">state_cost <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">left_join</span>(cost_st, state_df, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"state_name"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"region"</span>))</span>
+<span id="cb4-9"></span>
+<span id="cb4-10"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> state_cost, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> long, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> lat, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">group =</span> group)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-11">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_polygon</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colour =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"black"</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> average_price)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coord_map</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">projection =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"albers"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lat0 =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">39</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lat1 =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">45</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_void</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_fill_viridis_b</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb4-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Average childcare prices across the U.S."</span>)</span></code></pre></div></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/Blog 3/index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>From the map above, it can be observed that the states of Indiana and New Mexico are the only two that have a grey color. This is because they did not have any childcare price data in this data set.</p>
+<p>Massachusetts has the highest average weekly childcare prices of all states. Some of the states with the lowest average childcare prices are North Dakota and South Dakota.</p>
+</section>
+<section id="childcare-price-trends-over-time-in-massachusetts" class="level2">
+<h2 class="anchored" data-anchor-id="childcare-price-trends-over-time-in-massachusetts">Childcare Price Trends Over Time in Massachusetts</h2>
+<p>To study the trends in childcare prices in Massachusetts between 2008 and 2018, the scatterplot below shows trends in weekly median prices of childcare in counties in Massachusetts over those years.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">cost_mass <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> cost_long <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(state_name <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Massachusetts"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb5-2">   <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">age_group =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fct_relevel</span>(age_group, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"infant"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"toddler"</span>, </span>
+<span id="cb5-3">                                  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"preschool"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"school_age"</span>))</span>
+<span id="cb5-4"></span>
+<span id="cb5-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ggplot</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> cost_mass, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> study_year, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> price)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb5-6"> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colour =</span> age_group), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.4</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>         </span>
+<span id="cb5-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_smooth</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colour =</span> age_group), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">se =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>        </span>
+<span id="cb5-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">facet_wrap</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>care_type) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>      </span>
+<span id="cb5-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_x_continuous</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">breaks =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2008</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2018</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb5-10">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale_color_viridis_d</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb5-11">   <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">theme_minimal</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb5-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Weekly Childcare Prices in Massachusetts Counties (2008–2018)"</span>,</span>
+<span id="cb5-13">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">caption =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Trends shown by Age Group and Care Type"</span>,</span>
+<span id="cb5-14">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Year"</span>,</span>
+<span id="cb5-15">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Weekly Price"</span>)</span></code></pre></div></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://your-website-url.example.com/posts/Blog 3/index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The plot above shows childcare prices to have generally increased between 2008 and 2018 for each age-group. However, the childcare prices for school-age children remains the lowest of all 4 categories, with the highest being infant care.</p>
+<p>Weekly median prices of center-based childcare are generally higher than family-based care for infant, toddler and preschool aged children in Massachusetts throughout the years. However, childcare for school-aged children used to be much lower in center-based systems than family-care between 2008 and 2011, then it increased rapidly to where it slightly surpassed family-based care prices by 2018.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>From this exploration of childcare prices across the U.S. and on a smaller scale, in Massachusetts, it can be concluded that weekly median childcare prices differ according to different age-groups of children and the two different childcare systems. Center-based childcare appeared to be typically more expensive than family-based childcare, which might be due to the cost of paying for facilities in a center and staff salaries since centers like day-care centers usually hire multiple workers. Infant care also appeared to consistently be more expensive than all 3 other age-group categories. This might be because infants need more continuous and hands-on care than the older children.</p>
+<p>Potential improvements to this project could be creating a linear regression model to visualize the relationship between price of childcare and some of the variables such as age_group and others.</p>
+</section>
+<section id="connection-to-class-concepts" class="level2">
+<h2 class="anchored" data-anchor-id="connection-to-class-concepts">Connection to Class Concepts</h2>
+<p>I used a choropleth map to visualize spatial distribution of average weekly childcare prices throughout the U.S. The visualizations I made use colors that are accessible for individuals with Color Vision Deficiency.</p>
+<p>The limitation with this data set is that the raw data provided median weekly prices not actual prices, so the explorations above are based on weekly median childcare prices, therefore, we do not have access to the original sample size and variability.</p>
+</section>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<ol type="1">
+<li>Center for American Progress. Understanding the Basics of Child Care in the United States. Center for American Progress, https://www.americanprogress.org/article/understanding-the-basics-of-child-care-in-the-united-states/.</li>
+</ol>
+
+
+</section>
+
+ ]]></description>
+  <category>news</category>
+  <category>code</category>
+  <category>analysis</category>
+  <guid>https://your-website-url.example.com/posts/Blog 3/</guid>
+  <pubDate>Tue, 10 Mar 2026 04:00:00 GMT</pubDate>
+  <media:content url="https://your-website-url.example.com/posts/Blog 3/toys.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>Trends in U.S. Gas Prices</title>
   <dc:creator>Lala Sefale</dc:creator>
   <link>https://your-website-url.example.com/posts/Blog2/</link>
   <description><![CDATA[ 
@@ -89,8 +723,12 @@ font-style: inherit;">avg_price =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">mean</span>(price)) </span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'year'. You can override using the
-`.groups` argument.</code></pre>
+<pre><code>`summarise()` has regrouped the output.
+ℹ Summaries were computed grouped by year and fuel.
+ℹ Output is grouped by year.
+ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+ℹ Use `summarise(.by = c(year, fuel))` for per-operation grouping
+  (`?dplyr::dplyr_by`) instead.</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="do" style="color: #5E5E5E;
 background-color: null;
@@ -203,8 +841,12 @@ font-style: inherit;">average_price =</span> <span class="fu" style="color: #475
 background-color: null;
 font-style: inherit;">mean</span>(price)) </span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'year', 'fuel'. You can override using the
-`.groups` argument.</code></pre>
+<pre><code>`summarise()` has regrouped the output.
+ℹ Summaries were computed grouped by year, fuel, and grade.
+ℹ Output is grouped by year and fuel.
+ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+ℹ Use `summarise(.by = c(year, fuel, grade))` for per-operation grouping
+  (`?dplyr::dplyr_by`) instead.</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -293,10 +935,10 @@ font-style: inherit;">"Average price"</span>)</span></code></pre></div></div>
   <category>analysis</category>
   <guid>https://your-website-url.example.com/posts/Blog2/</guid>
   <pubDate>Tue, 17 Feb 2026 05:00:00 GMT</pubDate>
-  <media:content url="https://your-website-url.example.com/posts/Blog2/image.jpg" medium="image" type="image/jpeg"/>
+  <media:content url="https://your-website-url.example.com/posts/Blog2/gasoline.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
-  <title>Blog 1</title>
+  <title>The Languages of Africa</title>
   <dc:creator>Lala Sefale</dc:creator>
   <link>https://your-website-url.example.com/posts/post-with-code/</link>
   <description><![CDATA[ 
@@ -333,7 +975,7 @@ font-style: inherit;">"Average price"</span>)</span></code></pre></div></div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `ne_10m_admin_0_countries' from data source 
-  `C:\Users\sefal\OneDrive - St. Lawrence University\SPRING 2026\DATA334\DataVis334\countries\ne_10m_admin_0_countries.shp' 
+  `C:\Users\msefa24\OneDrive - St. Lawrence University\SPRING 2026\DATA334\DataVis334\countries\ne_10m_admin_0_countries.shp' 
   using driver `ESRI Shapefile'
 Simple feature collection with 258 features and 168 fields
 Geometry type: MULTIPOLYGON
@@ -371,28 +1013,7 @@ Geodetic CRS:  WGS 84</code></pre>
   <category>analysis</category>
   <guid>https://your-website-url.example.com/posts/post-with-code/</guid>
   <pubDate>Wed, 28 Jan 2026 05:00:00 GMT</pubDate>
-  <media:content url="https://your-website-url.example.com/posts/post-with-code/image.jpg" medium="image" type="image/jpeg"/>
-</item>
-<item>
-  <title>Welcome To My Blog</title>
-  <dc:creator>Tristan O&#39;Malley</dc:creator>
-  <link>https://your-website-url.example.com/posts/welcome/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-<p>This is the first post in a Quarto blog. Welcome!</p>
-<p><img src="https://your-website-url.example.com/posts/welcome/thumbnail.jpg" class="img-fluid"></p>
-<p>Since this post doesn’t specify an explicit <code>image</code>, the first image in the post will be used in the listing page of posts.</p>
-
-
-
- ]]></description>
-  <category>news</category>
-  <guid>https://your-website-url.example.com/posts/welcome/</guid>
-  <pubDate>Sun, 25 Jan 2026 05:00:00 GMT</pubDate>
+  <media:content url="https://your-website-url.example.com/posts/post-with-code/africa.jpg" medium="image" type="image/jpeg"/>
 </item>
 </channel>
 </rss>

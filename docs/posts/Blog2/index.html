@@ -9,7 +9,7 @@
 <meta name="author" content="Lala Sefale">
 <meta name="dcterms.date" content="2026-02-17">
 
-<title>Blog 2 – Data Visualization Blg Posts</title>
+<title>Trends in U.S. Gas Prices – DATA 334 Blog Posts</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -77,7 +77,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-e31584831b205ffbb2d98406f31c2a5b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-980b7731fb1d77f0b19a7f8959812838.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -120,7 +120,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a href="../../index.html" class="navbar-brand navbar-brand-logo">
     </a>
     <a class="navbar-brand" href="../../index.html">
-    <span class="navbar-title">Data Visualization Blg Posts</span>
+    <span class="navbar-title">DATA 334 Blog Posts</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -149,7 +149,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Blog 2</h1>
+      <h1 class="title">Trends in U.S. Gas Prices</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">news</div>
                 <div class="quarto-category">code</div>
@@ -216,8 +216,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, fuel) <span class="sc">|&gt;</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_price =</span> <span class="fu">mean</span>(price)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'year'. You can override using the
-`.groups` argument.</code></pre>
+<pre><code>`summarise()` has regrouped the output.
+ℹ Summaries were computed grouped by year and fuel.
+ℹ Output is grouped by year.
+ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+ℹ Use `summarise(.by = c(year, fuel))` for per-operation grouping
+  (`?dplyr::dplyr_by`) instead.</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">## visualization for trends in average fuel prices over the years</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -246,8 +250,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, fuel, grade) <span class="sc">|&gt;</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">average_price =</span> <span class="fu">mean</span>(price)) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has grouped output by 'year', 'fuel'. You can override using the
-`.groups` argument.</code></pre>
+<pre><code>`summarise()` has regrouped the output.
+ℹ Summaries were computed grouped by year, fuel, and grade.
+ℹ Output is grouped by year and fuel.
+ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+ℹ Use `summarise(.by = c(year, fuel, grade))` for per-operation grouping
+  (`?dplyr::dplyr_by`) instead.</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> grade_gas, <span class="fu">aes</span>(<span class="at">x =</span> year, <span class="at">y =</span> average_price, <span class="at">colour =</span> grade)) <span class="sc">+</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
