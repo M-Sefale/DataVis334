@@ -723,12 +723,8 @@ font-style: inherit;">avg_price =</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">mean</span>(price)) </span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has regrouped the output.
-ℹ Summaries were computed grouped by year and fuel.
-ℹ Output is grouped by year.
-ℹ Use `summarise(.groups = "drop_last")` to silence this message.
-ℹ Use `summarise(.by = c(year, fuel))` for per-operation grouping
-  (`?dplyr::dplyr_by`) instead.</code></pre>
+<pre><code>`summarise()` has grouped output by 'year'. You can override using the
+`.groups` argument.</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="do" style="color: #5E5E5E;
 background-color: null;
@@ -841,12 +837,8 @@ font-style: inherit;">average_price =</span> <span class="fu" style="color: #475
 background-color: null;
 font-style: inherit;">mean</span>(price)) </span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>`summarise()` has regrouped the output.
-ℹ Summaries were computed grouped by year, fuel, and grade.
-ℹ Output is grouped by year and fuel.
-ℹ Use `summarise(.groups = "drop_last")` to silence this message.
-ℹ Use `summarise(.by = c(year, fuel, grade))` for per-operation grouping
-  (`?dplyr::dplyr_by`) instead.</code></pre>
+<pre><code>`summarise()` has grouped output by 'year', 'fuel'. You can override using the
+`.groups` argument.</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -975,7 +967,7 @@ font-style: inherit;">"Average price"</span>)</span></code></pre></div></div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `ne_10m_admin_0_countries' from data source 
-  `C:\Users\msefa24\OneDrive - St. Lawrence University\SPRING 2026\DATA334\DataVis334\countries\ne_10m_admin_0_countries.shp' 
+  `C:\Users\sefal\OneDrive - St. Lawrence University\SPRING 2026\DATA334\DataVis334\countries\ne_10m_admin_0_countries.shp' 
   using driver `ESRI Shapefile'
 Simple feature collection with 258 features and 168 fields
 Geometry type: MULTIPOLYGON

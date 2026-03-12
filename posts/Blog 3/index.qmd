@@ -16,7 +16,7 @@ The data features two types of childcare providers: Center-based Care and Family
 
 In this data set, I am mostly interested in the study_year, county_name, state_name, and the variables for aggregated full-time median prices charged for Center-based Care and Family Childcare to study trends in childcare prices over time and across states, age groups and systems based on the following questions:
 
--   What is the spatial distribution of average childcare prices across U.S states? 
+-   What is the spatial distribution of average childcare prices across U.S states?
 
 -   What was the trend in prices of childcare between 2008 and 2018 in the state with the highest price levels?
 
@@ -72,7 +72,7 @@ ggplot(data = cost_long1, aes(x = age_group, y = price)) +
        y = "weekly price")
 ```
 
-Infant care tends to have higher median of prices and have outliers that tend to reach higher prices, while preschool and toddler care tend to have lower median prices, with preschool-age care having the least mean price of the four categories. This means that the cost of infant care tends more expensive than preschool and toddler care. Infants are 0 to 1 year olds, toddlers are children aged 1 to 3 years, preschoolers are aged 3 to 5 years, and school-aged children are 6 to 17 year olds. From the side-by-side boxplot above, it can be seen that the mean weekly price of childcare gets lower as the age group increases in years. This could be because the younger children require more intensive care than the older ones. 
+Infant care tends to have higher median of prices and have outliers that tend to reach higher prices, while preschool and toddler care tend to have lower median prices, with preschool-age care having the least mean price of the four categories. This means that the cost of infant care tends more expensive than preschool and toddler care. Infants are 0 to 1 year olds, toddlers are children aged 1 to 3 years, preschoolers are aged 3 to 5 years, and school-aged children are 6 to 17 year olds. From the side-by-side boxplot above, it can be seen that the mean weekly price of childcare gets lower as the age group increases in years. This could be because the younger children require more intensive care than the older ones.
 
 ```{r}
 # comparing care types
@@ -118,7 +118,6 @@ From the map above, it can be observed that the states of Indiana and New Mexico
 
 Massachusetts has the highest average weekly childcare prices of all states. Some of the states with the lowest average childcare prices are North Dakota and South Dakota.
 
-
 ## Childcare Price Trends Over Time in Massachusetts
 
 To study the trends in childcare prices in Massachusetts between 2008 and 2018, the scatterplot below shows trends in weekly median prices of childcare in counties in Massachusetts over those years.
@@ -142,10 +141,9 @@ ggplot(data = cost_mass, aes(x = study_year, y = price)) +
 
 ```
 
-The plot above shows childcare prices to have generally increased between 2008 and 2018 for each age-group. However, the childcare prices for school-age children remains the lowest of all 4 categories, with the highest being infant care. 
+The plot above shows childcare prices to have generally increased between 2008 and 2018 for each age-group. However, the childcare prices for school-age children remains the lowest of all 4 categories, with the highest being infant care.
 
 Weekly median prices of center-based childcare are generally higher than family-based care for infant, toddler and preschool aged children in Massachusetts throughout the years. However, childcare for school-aged children used to be much lower in center-based systems than family-care between 2008 and 2011, then it increased rapidly to where it slightly surpassed family-based care prices by 2018.
-
 
 ## Conclusion
 
@@ -155,12 +153,10 @@ Potential improvements to this project could be creating a linear regression mod
 
 ## Connection to Class Concepts
 
-I used a choropleth map to visualize spatial distribution of average weekly childcare prices throughout the U.S. 
-The visualizations I made use colors that are accessible for individuals with Color Vision Deficiency.
+I used a choropleth map to visualize spatial distribution of average weekly childcare prices throughout the U.S. The visualizations I made use colors that are accessible for individuals with Color Vision Deficiency.
 
 The limitation with this data set is that the raw data provided median weekly prices not actual prices, so the explorations above are based on weekly median childcare prices, therefore, we do not have access to the original sample size and variability.
 
 # References
 
 1.  Center for American Progress. Understanding the Basics of Child Care in the United States. Center for American Progress, https://www.americanprogress.org/article/understanding-the-basics-of-child-care-in-the-united-states/.
-
