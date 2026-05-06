@@ -1,15 +1,17 @@
 [
   {
-    "listing": "/Blog 1.html",
+    "listing": "/index.html",
     "items": [
+      "/posts/final project/index.html",
       "/posts/Blog 3/index.html",
       "/posts/Blog2/index.html",
       "/posts/post-with-code/index.html"
     ]
   },
   {
-    "listing": "/index.html",
+    "listing": "/Blog 1.html",
     "items": [
+      "/posts/final project/index.html",
       "/posts/Blog 3/index.html",
       "/posts/Blog2/index.html",
       "/posts/post-with-code/index.html"
